@@ -1,0 +1,73 @@
+#include <kipr/botball.h>
+
+int main()
+{
+    int left_motor = 1;
+    int right_motor = 0;
+    int distance = 4500; //number of ticks thing 1 will drive until it stops
+    int black = 3800;
+    int white = 3600;
+    
+    enable_servos();
+    set_servo_position(1,126); //lower arm 
+    msleep(1000);
+
+    //forward to cupler
+    motor(left_motor, 50);
+    motor(right_motor, 50);
+    msleep(2000);
+
+    //turn left to knock cupler
+    motor(left_motor, 0);
+    motor(right_motor, 100);
+    msleep(2000);
+
+    //backward to line up against wall
+    motor(left_motor, -25);
+    motor(right_motor, -25);
+    msleep(500);
+    ao();
+    
+    //move cupler yeeter (arm) up
+    set_servo_position(1, 560);
+    msleep(2000);
+    disable_servos();
+    
+    //turn to move up ramp
+    motor(right_motor,-50);
+    motor(left_motor, 50);
+    msleep(2000);
+    
+    //drive up ramp
+   /* motor(left_motor, 50);
+    motor(right_motor,50);
+    msleep(4000); */
+
+    //left to turn on the ramp
+    // motor(left_motor, 0);
+    //motor(right_motor, 100);
+    //msleep(1000);
+cmpc (0); 
+//line follower
+    while (gmpc(0) < distance) //beginning of while loop
+    {
+        if (analog(1) == black) //if the right sensor sees black
+   		 { 
+            motor(left_motor, 50); //turn left
+            motor(right_motor, 0);
+         }
+        else if (analog(0) == black) //if the left sensor sees black
+        {
+            motor(left_motor, 0); //turn right 
+            motor(right_motor, 50); 
+        }
+        else if ((analog(0) == white) && (analog(1) == white)) //if both sensors see white
+        {
+            motor(left_motor, 0); //go straight
+            motor(right_motor, 0);
+        }
+    }
+  ao();     
+    return 0;
+}
+
