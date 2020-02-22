@@ -5,13 +5,16 @@ int main()
     int left_motor = 1;
     int right_motor = 0;
     int distance = 4500; //number of ticks thing 1 will drive until it stops
-    int black = 3800;
-    int white = 3600;
+    int black = 3600; //3200 was approx read
+    int white = 3000;
     
     enable_servos();
     set_servo_position(1,126); //lower arm 
     msleep(1000);
-
+    
+    set_servo_position(0,670);
+    msleep(1000);
+    
     //forward to cupler
     motor(left_motor, 50);
     motor(right_motor, 50);
@@ -19,16 +22,16 @@ int main()
 
     //turn left to knock cupler
     motor(left_motor, 0);
-    motor(right_motor, 100);
+    motor(right_motor, 80);
     msleep(2000);
 
-    //backward to line up against wall
+    //backward
     motor(left_motor, -25);
     motor(right_motor, -25);
     msleep(500);
     ao();
     
-    //move cupler yeeter (arm) up
+    //move cupler yeeter up
     set_servo_position(1, 560);
     msleep(2000);
     disable_servos();
@@ -36,37 +39,144 @@ int main()
     //turn to move up ramp
     motor(right_motor,-50);
     motor(left_motor, 50);
-    msleep(2000);
+    msleep(1000);
+    
+    //little drive forward 
+    motor(left_motor, 40);
+    motor(right_motor, 40);
+    msleep(1100);
+    
+    //small left turn towards the ramp
+    motor(left_motor, 0);
+    motor(right_motor, 55);
+    msleep(1300);
+    
+    //drive a little bit up ramp to get back wheel off of the lip of the ramp
+    motor(left_motor,150);
+    motor(right_motor,150);
+    msleep(1000);
+    
+    //turn a little bit on ramp to get robot back on track
+    motor(left_motor,0);
+    motor(right_motor,50);
+    msleep(550);
     
     //drive up ramp
-   /* motor(left_motor, 50);
-    motor(right_motor,50);
-    msleep(4000); */
+   //motor(left_motor, 50);
+    //motor(right_motor,50);
+    //msleep(4000); 
 
-    //left to turn on the ramp
+    //left
     // motor(left_motor, 0);
     //motor(right_motor, 100);
     //msleep(1000);
-cmpc (0); 
-//line follower
+cmpc(0); 
+    printf("beginning of loop\n");
     while (gmpc(0) < distance) //beginning of while loop
     {
-        if (analog(1) == black) //if the right sensor sees black
-   		 { 
-            motor(left_motor, 50); //turn left
+        if (analog(0) > black) //if the right sensor sees black
+   		 {
+            printf("if\n");
+            motor(left_motor, 50); //turn right 
             motor(right_motor, 0);
          }
-        else if (analog(0) == black) //if the left sensor sees black
+        else if (analog(1) > black) //if the left sensor sees black
         {
-            motor(left_motor, 0); //turn right 
+            printf("else if\n");
+            motor(left_motor, 0); //turn left 
             motor(right_motor, 50); 
         }
-        else if ((analog(0) == white) && (analog(1) == white)) //if both sensors see white
+        else if ((analog(0) < white) && (analog(1) < white)) //if both sensors see white
         {
-            motor(left_motor, 0); //go straight
-            motor(right_motor, 0);
+            printf("else if 2\n");
+            motor(left_motor, 50); //go straight
+            motor(right_motor, 50);
+        }
+        else 
+        {
+            motor(left_motor, 50);
+            motor(right_motor, 50);
         }
     }
+    
+    //drop arm to knock off astronauts
+    set_servo_position(0,2047);
+    msleep(1000);
+    disable_servos();
+    
+    //go forward onto platform
+    motor(left_motor, 110);
+    motor(right_motor, 110);
+    msleep(700);
+    
+    //90 degree turn to line up w platform: small turn, backwards so it doesn't get stuck, another small turn,backwards again, and more turning
+    motor(left_motor, 0);
+    motor(right_motor, 40);
+    msleep(1000);
+    motor(left_motor, -35);
+    motor(right_motor, -25);
+    msleep(500);
+    motor(left_motor, 0);
+    motor(right_motor, 40);
+    msleep(1000);
+    motor(left_motor, -35);
+    motor(right_motor, -25);
+    msleep(500);
+    motor(left_motor, 0);
+    motor(right_motor, 40);
+    msleep(1000);
+    
+    
+    //drop arm to knock off astronauts
+    set_servo_position(0,2047);
+    msleep(1000);
+    
+    cmpc(0);
+    
+     printf("beginning of loop\n");
+    while (gmpc(0) < 2500) //beginning of while loop
+    {
+        if (analog(0) > black) //if the right sensor sees black
+   		 {
+            printf("if\n");
+            motor(left_motor, 50); //turn right 
+            motor(right_motor, 0);
+         }
+        else if (analog(1) > black) //if the left sensor sees black
+        {
+            printf("else if\n");
+            motor(left_motor, 0); //turn left 
+            motor(right_motor, 50); 
+        }
+        else if ((analog(0) < white) && (analog(1) < white)) //if both sensors see white
+        {
+            printf("else if 2\n");
+            motor(left_motor, 50); //go straight
+            motor(right_motor, 50);
+        }
+    }
+    //move arm down to knock off robots
+    enable_servos();
+    set_servo_position(1, 150);
+    msleep(500);
+    
+    //turn to knock off astronauts
+    int i;
+    for ( i=0; i<6; i++)
+    {
+    //printf(i);
+    motor(left_motor, 75);
+    motor(right_motor, 0);
+    msleep(500);
+    motor(left_motor, -20);
+    motor(right_motor, -20);
+    msleep(500);
+    }
+    //drive forward past astronauts
+    //motor(left_motor, 100);
+    //motor(right_motor, 100);
+    //msleep(4000);
+    
   ao();     
     return 0;
 }
