@@ -12,7 +12,7 @@ int main()
     set_servo_position(1,126); //lower arm 
     msleep(1000);
     
-    set_servo_position(0,670);
+    set_servo_position(0,670); //move arm
     msleep(1000);
     
     //forward to cupler
@@ -94,7 +94,7 @@ cmpc(0);
         }
         else 
         {
-            motor(left_motor, 50);
+            motor(left_motor, 50); //go straight
             motor(right_motor, 50);
         }
     }
